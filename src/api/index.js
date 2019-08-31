@@ -12,4 +12,20 @@ app.get('/secret', (req, res) => {
   return res.send('you found the secret!');
 })
 
+app.get('/player', async (req, res) => {
+  const Sequelize = require('sequelize');
+  const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://:postgres@localhost:5432/darts');
+  
+  const Player = sequelize.define('player', {
+    name: Sequelize.STRING,
+  });
+  
+  await sequelize.sync()
+  const player = await Player.create({
+    name: 'Joe',
+  });
+  
+  return res.send('player created: ' + player.name)
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
