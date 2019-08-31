@@ -7,24 +7,22 @@ app.get('/', (req, res) => res.send('Hello World!'))
 
 app.get('/secret', (req, res) => {
   if (password && req.query.password !== password) {
-    return res.send('Access denied');
+    return res.send('Access denied')
   }
-  return res.send('you found the secret!');
+  return res.send('you found the secret!')
 })
 
 app.get('/player', async (req, res) => {
-  const Sequelize = require('sequelize');
-  const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://:postgres@localhost:5432/darts');
-  
+  const Sequelize = require('sequelize')
+  const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://:postgres@localhost:5432/darts')
+
   const Player = sequelize.define('player', {
     name: Sequelize.STRING,
-  });
-  
+  })
+
   await sequelize.sync()
-  const player = await Player.create({
-    name: 'Joe',
-  });
-  
+  const player = await Player.create({ name: 'Joe' })
+
   return res.send('player created: ' + player.name)
 })
 
