@@ -6,7 +6,7 @@ const app = express()
 const port = process.env.PORT || 3000
 const password = process.env.PASSWORD
 
-app.get('/', (req, res) => res.send('Hello World!'))
+app.use(express.static(__dirname + '/web'))
 
 app.get('/secret', (req, res) => {
   if (password && req.query.password !== password) {
