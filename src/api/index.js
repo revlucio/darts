@@ -6,13 +6,12 @@ const app = express()
 const port = process.env.PORT || 3000
 const password = process.env.PASSWORD
 
-app.use(express.static(__dirname + '/web'))
-
 app.get('/secret', (req, res) => {
-  if (password && req.query.password !== password) {
-    return res.send('Access denied')
+  if (req.query.password !== password) {
+    return res.status(401).send('access denied')
   }
-  return res.send('you found the secret!')
+
+  return res.status(200).send('woop')
 })
 
 app.get('/player', async (req, res) => {
@@ -44,5 +43,14 @@ app.get('/players', async (req, res) => {
 
   return res.send(JSON.stringify(players))
 })
+
+app.use((req, res, next) => {
+  if (req.url.startsWith('/login') || req.url.startsWith('/admin')) {
+    req.url = '/'
+  }
+  next()
+})
+
+app.use(express.static(__dirname + '/web'))
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

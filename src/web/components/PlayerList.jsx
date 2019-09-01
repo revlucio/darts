@@ -4,16 +4,14 @@ const PlayerList = () => {
   const [players, setPlayers] = useState([])
   const [loaded, setLoaded] = useState(false)
 
-  useEffect(() => {
-    if (!loaded) {
-      fetch('/players')
-        .then(response => response.json())
-        .then(json => {
-          setLoaded(true)
-          setPlayers(json)
-        })
-    }
-  })
+  if (!loaded) {
+    fetch('/players')
+      .then(response => response.json())
+      .then(json => {
+        setLoaded(true)
+        setPlayers(json)
+      })
+  }
 
   return (
     <>
