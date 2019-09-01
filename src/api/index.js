@@ -1,4 +1,7 @@
-const express = require('express')
+require('babel-polyfill')
+
+import express from 'express'
+
 const app = express()
 const port = process.env.PORT || 3000
 const password = process.env.PASSWORD
@@ -29,14 +32,14 @@ app.get('/player', async (req, res) => {
 app.get('/players', async (req, res) => {
   const Sequelize = require('sequelize')
   const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://:postgres@localhost:5432/darts')
-  
+
   const Player = sequelize.define('player', {
     name: Sequelize.STRING,
   })
-  
+
   await sequelize.sync()
   const players = await Player.findAll()
-  
+
   return res.send(JSON.stringify(players))
 })
 
