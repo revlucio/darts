@@ -23,8 +23,9 @@ app.get('/player', async (req, res) => {
     name: Sequelize.STRING,
   })
 
-  await sequelize.sync()
   const player = await Player.create({ name: req.query.name })
+
+  await sequelize.close()
 
   return res.send('player created: ' + player.name)
 })
@@ -37,8 +38,9 @@ app.get('/players', async (req, res) => {
     name: Sequelize.STRING,
   })
 
-  await sequelize.sync()
   const players = await Player.findAll()
+
+  await sequelize.close()
 
   return res.send(JSON.stringify(players))
 })
