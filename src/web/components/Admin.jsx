@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Cookies from 'universal-cookie'
+import { fetchPlayers } from '../services/api'
 
 const addNewPlayer = name =>
   fetch('/player', {
@@ -10,9 +11,22 @@ const addNewPlayer = name =>
     },
   })
 
+const removePlayer = name =>
+  fetch(`/player/${name}`, {
+    method: 'DELETE',
+    headers: {
+      ['Content-Type']: 'application/json; charset=utf-8',
+    },
+  })
+
 const Admin = () => {
   const [isAdmin, setIsAdmin] = useState(null)
   const [newPlayerName, setNewPlayerName] = useState('')
+  const [players, setPlayers] = useState([])
+
+  useEffect(() => {
+    fetchPlayers(setPlayers)
+  }, [])
 
   if (isAdmin === null) {
     const cookies = new Cookies()
@@ -29,6 +43,15 @@ const Admin = () => {
           </label>
           <button onClick={() => addNewPlayer(newPlayerName)}>add</button>
         </fieldset>
+
+        <h2>Players</h2>
+        <ul>
+          {players.map(player => (
+            <li>
+              {player.name} <button onClick={() => removePlayer(player.name)}>remove</button>
+            </li>
+          ))}
+        </ul>
       </>
     )
   } else if (isAdmin === false) {

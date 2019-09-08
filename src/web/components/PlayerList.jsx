@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { fetchPlayers } from '../services/api'
 
 const PlayerList = () => {
   const [players, setPlayers] = useState([])
-  const [loaded, setLoaded] = useState(false)
 
-  if (!loaded) {
-    fetch('/players')
-      .then(response => response.json())
-      .then(json => {
-        setLoaded(true)
-        setPlayers(json)
-      })
-  }
+  useEffect(() => {
+    fetchPlayers(setPlayers)
+  }, [])
 
   return (
     <>

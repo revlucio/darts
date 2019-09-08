@@ -1,6 +1,7 @@
-require('babel-polyfill')
-
+import { database } from './database'
 import express from 'express'
+
+require('babel-polyfill')
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -10,35 +11,32 @@ app.use(express.json())
 
 app.get('/secret', (req, res) => {
   if (req.query.password !== password) {
-    return res.status(401).send('access denied')
+    return res.send(401)
   }
 
-  return res.status(200).send('woop')
+  return res.send(200)
 })
 
 app.post('/player', async (req, res) => {
-  const Sequelize = require('sequelize')
-  const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://:postgres@localhost:5432/darts')
-
-  const Player = sequelize.define('player', {
-    name: Sequelize.STRING,
-  })
-
-  const player = await Player.create({ name: req.body.name })
+  const { sequelize, Player } = database()
+  await Player.create({ name: req.body.name })
 
   await sequelize.close()
 
-  return res.send('player created: ' + player.name)
+  return res.send(200)
+})
+
+app.delete('/player/:name', async (req, res) => {
+  const { sequelize, Player } = database()
+  await Player.destroy({ where: { name: req.params.name } })
+
+  await sequelize.close()
+
+  return res.send(200)
 })
 
 app.get('/players', async (req, res) => {
-  const Sequelize = require('sequelize')
-  const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://:postgres@localhost:5432/darts')
-
-  const Player = sequelize.define('player', {
-    name: Sequelize.STRING,
-  })
-
+  const { sequelize, Player } = database()
   const players = await Player.findAll()
 
   await sequelize.close()
