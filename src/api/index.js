@@ -6,6 +6,8 @@ const app = express()
 const port = process.env.PORT || 3000
 const password = process.env.PASSWORD
 
+app.use(express.json())
+
 app.get('/secret', (req, res) => {
   if (req.query.password !== password) {
     return res.status(401).send('access denied')
@@ -14,7 +16,7 @@ app.get('/secret', (req, res) => {
   return res.status(200).send('woop')
 })
 
-app.get('/player', async (req, res) => {
+app.post('/player', async (req, res) => {
   const Sequelize = require('sequelize')
   const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://:postgres@localhost:5432/darts')
 
@@ -22,7 +24,7 @@ app.get('/player', async (req, res) => {
     name: Sequelize.STRING,
   })
 
-  const player = await Player.create({ name: req.query.name })
+  const player = await Player.create({ name: req.body.name })
 
   await sequelize.close()
 
