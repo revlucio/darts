@@ -18,7 +18,7 @@ app.get('/secret', (req, res) => {
 })
 
 app.post('/player', async (req, res) => {
-  const { sequelize, Player } = database()
+  const { sequelize, Player } = await database()
   await Player.create({ name: req.body.name })
 
   await sequelize.close()
@@ -27,21 +27,38 @@ app.post('/player', async (req, res) => {
 })
 
 app.delete('/player/:name', async (req, res) => {
-  const { sequelize, Player } = database()
+  const { sequelize, Player } = await database()
   await Player.destroy({ where: { name: req.params.name } })
 
   await sequelize.close()
 
-  return res.send(200)
+  return res.send(201)
 })
 
 app.get('/players', async (req, res) => {
-  const { sequelize, Player } = database()
+  const { sequelize, Player, Game } = await database()
   const players = await Player.findAll()
+  const games = await Game.findAll()
+  await sequelize.close()
+
+  const leaderboard = players.map(player => {
+    const { name } = player
+    const wins = games.filter(game => game.winner === name).length
+    const losses = games.filter(game => game.loser === name).length
+
+    return { name, wins, losses }
+  })
+
+  return res.json(leaderboard)
+})
+
+app.post('/game', async (req, res) => {
+  const { sequelize, Game } = await database()
+  await Game.create({ winner: req.body.winner, loser: req.body.loser })
 
   await sequelize.close()
 
-  return res.send(JSON.stringify(players))
+  return res.send(201)
 })
 
 app.use((req, res, next) => {

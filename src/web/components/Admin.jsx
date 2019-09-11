@@ -1,30 +1,23 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Cookies from 'universal-cookie'
-import { fetchPlayers } from '../services/api'
+import { fetchPlayers, post, del } from '../services/api'
 
-const addNewPlayer = name =>
-  fetch('/player', {
-    method: 'POST',
-    body: JSON.stringify({ name }),
-    headers: {
-      ['Content-Type']: 'application/json; charset=utf-8',
-    },
-  })
+const addNewPlayer = name => post('/player', { name })
+const addNewGame = game => post('/game', game)
 
 const Admin = () => {
   const [isAdmin, setIsAdmin] = useState(null)
   const [newPlayerName, setNewPlayerName] = useState('')
   const [players, setPlayers] = useState([])
+  const [newGame, setNewGame] = useState({})
 
   const removePlayer = name =>
-    fetch(`/player/${name}`, {
-      method: 'DELETE',
-      headers: {
-        ['Content-Type']: 'application/json; charset=utf-8',
-      },
-    }).then(() => {
+    del(`/player/${name}`).then(() => {
       setPlayers(players.filter(p => p.name !== name))
     })
+
+  const setWinner = winner => setNewGame({ ...newGame, winner })
+  const setLoser = loser => setNewGame({ ...newGame, loser })
 
   useEffect(() => {
     fetchPlayers(setPlayers)
@@ -49,16 +42,37 @@ const Admin = () => {
         </fieldset>
 
         <h2>Players</h2>
-        <ul>
+        <div className="ui list">
           {players.map(player => (
-            <li>
+            <div className="item">
               {player.name}{' '}
               <button className="ui negative button" onClick={() => removePlayer(player.name, setPlayers)}>
                 Remove
               </button>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
+
+        <h2>Games</h2>
+        <fieldset>
+          <h3>Add a new game</h3>
+          <select onChange={e => setWinner(e.target.value)}>
+            <option>Select a player</option>
+            {players.map(player => (
+              <option>{player.name}</option>
+            ))}
+          </select>
+          beat
+          <select onChange={e => setLoser(e.target.value)}>
+            <option>Select a player</option>
+            {players.map(player => (
+              <option>{player.name}</option>
+            ))}
+          </select>
+          <button className="ui primary button" onClick={() => addNewGame(newGame)}>
+            Add
+          </button>
+        </fieldset>
       </>
     )
   } else if (isAdmin === false) {
