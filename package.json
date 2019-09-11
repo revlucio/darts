@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build:web": "parcel build src/web/index.html --out-dir dist/web",
-    "build:api": "babel src/api/index.js -d dist",
+    "build:api": "babel src/api/*.js -d dist",
     "build": "rm -rf dist && yarn build:web && yarn build:api",
     "start:api": "node src/api/index.js",
     "start:web": "parcel src/web/index.html",
