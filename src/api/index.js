@@ -41,13 +41,19 @@ app.get('/players', async (req, res) => {
   const games = await Game.findAll()
   await sequelize.close()
 
-  const leaderboard = players.map(player => {
-    const { name } = player
-    const wins = games.filter(game => game.winner === name).length
-    const losses = games.filter(game => game.loser === name).length
+  const leaderboard = players
+    .map(player => {
+      const { name } = player
+      const wins = games.filter(game => game.winner === name).length
+      const losses = games.filter(game => game.loser === name).length
+      const winPercentage = Math.round((wins / (wins + losses)) * 100 || 0)
 
-    return { name, wins, losses }
-  })
+      return { name, wins, losses, winPercentage }
+    })
+    .sort((left, right) => {
+      const winDifference = right.wins - left.wins
+      return winDifference === 0 ? right.winPercentage - left.winPercentage : winDifference
+    })
 
   return res.json(leaderboard)
 })

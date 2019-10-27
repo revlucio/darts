@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { fetchPlayers } from '../services/api'
 
-const playerRow = ({ losses, name, wins }) => (
+const playerRow = ({ losses, name, wins, winPercentage }) => (
   <tr>
     <td>{name}</td>
     <td>{wins}</td>
     <td>{losses}</td>
-    <td>{(wins / (wins + losses)) * 100 || 0}%</td>
+    <td>{winPercentage}%</td>
   </tr>
 )
 
