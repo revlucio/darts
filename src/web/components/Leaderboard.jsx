@@ -6,7 +6,7 @@ const playerRow = ({ losses, name, wins, winPercentage }) => (
     <td>{name}</td>
     <td>{wins}</td>
     <td>{losses}</td>
-    <td>{winPercentage}%</td>
+    <td>{winPercentage}</td>
   </tr>
 )
 
@@ -18,20 +18,20 @@ const Leaderboard = () => {
   }, [])
 
   return (
-    <>
-      <h1>Leaderboard</h1>
-      <table>
+    <div className="ui raised very padded text container segment">
+      <h1 className="ui header">Fluidly Darts Leaderboard</h1>
+      <table className="ui celled table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>W</th>
-            <th>L</th>
+            <th>Player</th>
+            <th>Wins</th>
+            <th>Losses</th>
             <th>%</th>
           </tr>
         </thead>
         <tbody>{players.map(playerRow)}</tbody>
       </table>
-    </>
+    </div>
   )
 }
 
